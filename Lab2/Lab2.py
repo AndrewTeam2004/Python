@@ -52,6 +52,7 @@ while True:
 # берем только первые n отсчетов сигнала
 signal = data[:n]
 
+print("Время вычисления:")
 print (time.time() - start_time, "seconds")
 
 # ---------------------------
