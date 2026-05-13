@@ -25,17 +25,19 @@ dp = Dispatcher()
 
 
 def compute_expression(text: str) -> str:
-    """
-    Вычисляет математическое выражение и возвращает результат или ошибку.
-    """
     original_text = text
     text = text.replace(" ", "")
     logger.debug(f"Вычисляю выражение: {text}")
 
-    # Заменяем ^ на ** для поддержки возведения в степень
+    if not text:
+        return "Ошибка ввода. Введите математическое выражение."
+
+    # Проверка: нельзя вводить просто число, например 123
+    if not re.search(r'[\+\-\*/\^]', text) and not re.search(r'\b[a-zA-Z_]+\s*\(', text):
+        return "Ошибка ввода. Выражение должно содержать оператор или функцию."
+
     text = text.replace('^', '**')
 
-    # Приводим функции к нижнему регистру для совместимости
     text = re.sub(
         r'\b(Cos|Sin|Tan|Log|Exp|Sqrt|Pow)\b',
         lambda m: m.group(0).lower(),
@@ -50,7 +52,6 @@ def compute_expression(text: str) -> str:
     except Exception as e:
         logger.error(f"Ошибка вычисления '{original_text}': {e}")
         return "Ошибка ввода. Пример: 2+2 или sqrt(4) или 3^2"
-
 
 @dp.message(Command("start"))
 async def start(message: types.Message) -> None:
